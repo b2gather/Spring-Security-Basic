@@ -28,7 +28,7 @@ public class MemberController {
 	@PostMapping("")
 	public String register(MemberRegisterDto memberRegisterDto, Model model) {
 		memberService.register(memberRegisterDto);
-		return "redirect:/login";
+		return "redirect:/";
 	}
 
 	@GetMapping("/join")
