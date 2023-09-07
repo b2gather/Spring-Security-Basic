@@ -1,12 +1,9 @@
 package com.tlab.basic.controller;
 
-import com.tlab.basic.config.SecurityConfig;
-import org.junit.jupiter.api.*;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -14,20 +11,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(IndexController.class)
-@TestMethodOrder(MethodOrderer.DisplayName.class)
-@Import(SecurityConfig.class)
-class IndexControllerTest {
-
-	@Autowired
-	MockMvc mockMvc;
-
-	@BeforeEach
-	void setUp() {
-	}
-
-	@AfterEach
-	void tearDown() {
-	}
+class IndexControllerTest extends AbstractControllerTest {
 
 	@DisplayName("IndexPage")
 	@Test

@@ -1,35 +1,18 @@
 package com.tlab.basic.repository;
 
 import com.tlab.basic.domain.entity.Member;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.jdbc.EmbeddedDatabaseConnection;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@DataJpaTest
-@ActiveProfiles("test")
-@AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2)
-class MemberRepositoryTest {
+class MemberRepositoryTest extends AbstractRepositoryTest {
 
 	@Autowired
     MemberRepository memberRepository;
-
-	@BeforeEach
-	void setUp() {
-	}
-
-	@AfterEach
-	void tearDown() {
-	}
 
 	@DisplayName("Save")
 	@Test
@@ -46,14 +29,14 @@ class MemberRepositoryTest {
 
 		// then
 		assertThat(saved.getId()).isNotNull();
+		assertThat(saved).isEqualTo(member);
 	}
 
-	@DisplayName("FindByUsername")
+	@DisplayName("FindByUsername | 있는 유저")
 	@Test
 	void FindByUsername() {
 		// given
-		Member member = Member.builder().username("test").email("test@test.com").password("test").build();
-		Member saved = memberRepository.save(member);
+		Member saved = getSavedMember();
 
 		// when
 		Member found = memberRepository.findByUsername(saved.getUsername()).orElseThrow();
@@ -62,18 +45,48 @@ class MemberRepositoryTest {
         assertThat(found).isEqualTo(saved);
 	}
 
-	@DisplayName("FindByUsername | 없는 유저명 -> Optional.isEmpty")
+	@DisplayName("FindByUsername | 없는 유저 -> Optional.isEmpty")
 	@Test
 	void FindByUsername_notExistUsername() {
 		// given
-		Member member = Member.builder().username("test").email("test@test.com").password("test").build();
-		Member saved = memberRepository.save(member);
+		Member saved = getSavedMember();
 
 		// when
 		Optional<Member> found = memberRepository.findByUsername(saved.getUsername() + "notExist");
 
         // then
         assertThat(found.isEmpty()).isEqualTo(true);
+	}
+
+	@DisplayName("ExistsByUsername | 있는 유저명 -> true")
+	@Test
+	void ExistsByUsername() {
+		// given
+		Member savedMember = getSavedMember();
+
+		// when
+		boolean exists = memberRepository.existsByUsername(savedMember.getUsername());
+
+		// then
+		assertThat(exists).isEqualTo(true);
+	}
+
+	@DisplayName("ExistsByUsername | 없는 유저명 -> false")
+	@Test
+	void ExistsByUsername_notExist() {
+		// given
+		Member savedMember = getSavedMember();
+
+		// when
+		boolean exists = memberRepository.existsByUsername(savedMember + "notExist");
+
+		// then
+		assertThat(exists).isEqualTo(false);
+	}
+
+	private Member getSavedMember() {
+		return memberRepository.save(Member.builder()
+				.username("savedMember").email("test@test.com").password("test").build());
 	}
 
 }

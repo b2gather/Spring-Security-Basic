@@ -11,4 +11,6 @@ public interface MemberRepository extends Repository<Member, Long> {
 
 	Optional<Member> findByUsername(String username);
 
+	boolean existsByUsername(String username);
+
 }
