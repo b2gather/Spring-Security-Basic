@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <link rel="icon" href="/favicon.ico">
@@ -9,7 +9,11 @@
     <link th:href="@{/css/custom.css}" rel="stylesheet">
 </head>
 <body>
-    Hello world!
+    Hello world! <span sec:authentication="name"></span>
+    <br>
+    <div sec:authorize="isAuthenticated()">
+        <span sec:authentication="authorities"></span>
+    </div>
 
     <script th:src="@{/js/bootstrap-531/bootstrap.bundle.min.js}"></script>
     <script th:src="@{/js/axios-1_5_0/axios.js}"></script>

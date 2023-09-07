@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <link rel="icon" href="/favicon.ico">
@@ -10,7 +10,7 @@
 </head>
 <body>
     <main id="app" class="form-signin w-100 m-auto">
-        <form name="loginForm" th:action="@{/login}" method="post" data-bitwarden-watching="1">
+        <form name="loginForm" th:action="@{/login}" method="post" data-bitwarden-watching="1" sec:authorize="!isAuthenticated()">
             <img class="mb-4" th:src="@{/images/spring-icon.svg}" alt="" width="72" height="57">
             <h1 class="h3 mb-3 fw-normal">로그인해주세요</h1>
 
@@ -34,6 +34,9 @@
             <button class="btn btn-secondary w-100 py-2" type="button" th:onclick="|location.href='@{/members/register}'|">회원 가입</button>
             <p class="mt-5 mb-3 text-body-secondary">© 2023</p>
         </form>
+        <div sec:authorize="isAuthenticated()">
+            이미 로그인 되어있습니다
+        </div>
     </main>
 
     <script th:src="@{/js/bootstrap-531/bootstrap.bundle.min.js}"></script>

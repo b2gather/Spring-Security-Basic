@@ -23,6 +23,12 @@ public class SecurityConfig {
 				)
 				.formLogin(customizer -> customizer
 						.loginPage("/login")
+						.loginProcessingUrl("/login")
+						.defaultSuccessUrl("/")
+						.permitAll()
+				)
+				.logout(customizer -> customizer
+						.logoutSuccessUrl("/")
 				)
 				.build();
 	}
