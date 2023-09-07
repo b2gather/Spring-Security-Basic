@@ -2,7 +2,10 @@ package com.tlab.basic.service;
 
 import com.tlab.basic.domain.dto.MemberDto;
 import com.tlab.basic.domain.dto.MemberRegisterDto;
+import com.tlab.basic.domain.dto.OAuthMemberRegisterDto;
 import com.tlab.basic.domain.entity.Member;
+import com.tlab.basic.domain.entity.MemberProvider;
+import com.tlab.basic.domain.entity.MemberRole;
 import com.tlab.basic.domain.mapper.MemberMapper;
 import com.tlab.basic.domain.mapper.MemberMapperImpl;
 import com.tlab.basic.exception.UsernameAlreadyExistException;
@@ -42,7 +45,7 @@ class MemberServiceTest {
 	@InjectMocks
     private MemberService memberService;
 
-	@DisplayName("Register")
+	@DisplayName("Register(MemberRegisterDto)")
 	@Test
 	void Register() {
 		// given
@@ -61,7 +64,7 @@ class MemberServiceTest {
 		assertThat(passwordEncoder.matches(memberRegisterDto.getPassword(), registered.getPassword())).isTrue();
 	}
 
-	@DisplayName("Register | 존재하는 유저명 -> UsernameAlreadyExistException")
+	@DisplayName("Register(MemberRegisterDto) | 존재하는 유저명 -> UsernameAlreadyExistException")
 	@Test
 	void Register_() {
 		// given
@@ -73,6 +76,29 @@ class MemberServiceTest {
 		assertThrows(UsernameAlreadyExistException.class, () ->
 				memberService.register(memberRegisterDto)
 		);
+	}
+
+	@DisplayName("Register(OAuthMemberRegisterDto)")
+	@Test
+	void Register_OAuthMemberRegisterDto() {
+		// given
+		OAuthMemberRegisterDto oAuthMemberRegisterDto = getoAuthMemberRegisterDto();
+		when(memberRepository.save(any(Member.class))).thenAnswer(invocation -> {
+			Member member = invocation.getArgument(0);
+			ReflectionTestUtils.setField(member, "id", 1L);
+			return member;
+		});
+
+		// when
+		MemberDto registered = memberService.register(oAuthMemberRegisterDto);
+
+		// then
+		assertThat(registered.getUsername()).isEqualTo(oAuthMemberRegisterDto.getUsername());
+		assertThat(registered.getEmail()).isEqualTo(oAuthMemberRegisterDto.getEmail());
+		assertThat(registered.getNickname()).isEqualTo(oAuthMemberRegisterDto.getNickname());
+		assertThat(registered.getProvider()).isEqualTo(oAuthMemberRegisterDto.getProvider());
+		assertThat(registered.getProviderId()).isEqualTo(oAuthMemberRegisterDto.getProviderId());
+		assertThat(registered.getRoles()).containsExactly(MemberRole.ROLE_USER);
 	}
 
 	@DisplayName("FindByUsername")
@@ -109,4 +135,16 @@ class MemberServiceTest {
 		memberRegisterDto.setEmail("<EMAIL>");
 		return memberRegisterDto;
 	}
+
+	private OAuthMemberRegisterDto getoAuthMemberRegisterDto() {
+		return OAuthMemberRegisterDto.builder()
+				.username("John")
+				.password("<PASSWORD>")
+				.email("<EMAIL>")
+				.nickname("<NICKNAME>")
+				.provider(MemberProvider.GOOGLE)
+				.providerId("1L")
+				.build();
+	}
+
 }

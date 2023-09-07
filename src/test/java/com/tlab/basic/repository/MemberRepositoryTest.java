@@ -20,6 +20,7 @@ class MemberRepositoryTest extends AbstractRepositoryTest {
 		// given
 		Member member = Member.builder()
 				.username("test")
+				.nickname("nickname")
 				.email("test@test.com")
 				.password("test")
 				.build();
@@ -86,7 +87,7 @@ class MemberRepositoryTest extends AbstractRepositoryTest {
 
 	private Member getSavedMember() {
 		return memberRepository.save(Member.builder()
-				.username("savedMember").email("test@test.com").password("test").build());
+				.username("savedMember").nickname("nickname").email("test@test.com").password("test").build());
 	}
 
 }
