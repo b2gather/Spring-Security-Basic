@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
@@ -21,10 +22,13 @@ public class Member {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	@Column(unique = true)
 	private String username;
 
+	@Column(nullable = false)
 	private String password;
 
+	@Column(nullable = false)
 	private String email;
 
 	private String provider;
@@ -34,6 +38,9 @@ public class Member {
 
 	@CreatedDate
 	private LocalDateTime createdAt;
+
+	@LastModifiedDate
+	private LocalDateTime updatedAt;
 
 	@Builder
 	private Member(String username, String password, String email, String provider, EnumSet<MemberRole> roles) {
