@@ -2,6 +2,8 @@ package com.tlab.basic.auth;
 
 import com.tlab.basic.domain.entity.Member;
 import com.tlab.basic.domain.entity.MemberRole;
+import com.tlab.basic.domain.mapper.MemberMapper;
+import com.tlab.basic.domain.mapper.MemberMapperImpl;
 import com.tlab.basic.repository.MemberRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
@@ -10,6 +12,7 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -25,15 +28,18 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 @TestMethodOrder(MethodOrderer.DisplayName.class)
-class MemberUserDetailsServiceTest {
+class PrincipalDetailsServiceTest {
 
 	private final String username = "username";
 
 	@Mock
 	MemberRepository memberRepository;
 
+	@Spy
+	MemberMapper mapper = new MemberMapperImpl();
+
 	@InjectMocks
-	MemberUserDetailsService memberUserDetailsService;
+	PrincipalDetailsService principalDetailsService;
 
 	@DisplayName("LoadUserByUsername")
 	@Test
@@ -43,7 +49,7 @@ class MemberUserDetailsServiceTest {
 		when(memberRepository.findByUsername(member.getUsername())).thenReturn(Optional.of(member));
 
 		// when
-		UserDetails userDetails = memberUserDetailsService.loadUserByUsername(username);
+		UserDetails userDetails = principalDetailsService.loadUserByUsername(username);
 
 		// then
 		assertThat(userDetails.getUsername()).isEqualTo(member.getUsername());
@@ -60,7 +66,7 @@ class MemberUserDetailsServiceTest {
 
 		// when
 		// then
-		assertThrows(UsernameNotFoundException.class, () -> memberUserDetailsService.loadUserByUsername(username));
+		assertThrows(UsernameNotFoundException.class, () -> principalDetailsService.loadUserByUsername(username));
 	}
 
 }

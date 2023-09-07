@@ -1,15 +1,18 @@
 package com.tlab.basic.config;
 
+import com.tlab.basic.auth.OAuth2DetailsService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
+@RequiredArgsConstructor
 public class SecurityConfig {
+
+	private final OAuth2DetailsService oAuth2DetailsService;
 
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -27,15 +30,16 @@ public class SecurityConfig {
 						.defaultSuccessUrl("/")
 						.permitAll()
 				)
+				.oauth2Login(customizer -> customizer
+						.loginPage("/login")
+						.userInfoEndpoint(uieCustomizer -> uieCustomizer
+								.userService(oAuth2DetailsService)
+						)
+				)
 				.logout(customizer -> customizer
 						.logoutSuccessUrl("/")
 				)
 				.build();
 	}
-
-	@Bean
-    public PasswordEncoder passwordEncoder() {
-        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
-    }
 
 }

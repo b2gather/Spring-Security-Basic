@@ -1,25 +1,28 @@
 package com.tlab.basic.auth;
 
-import com.tlab.basic.domain.entity.Member;
+import com.tlab.basic.domain.dto.MemberDto;
 import com.tlab.basic.domain.entity.MemberRole;
+import lombok.Getter;
 import lombok.Setter;
+import org.springframework.lang.Nullable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 
-import java.util.Collection;
-import java.util.EnumSet;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Setter
-public class MemberUserDetails implements UserDetails {
+public class PrincipalDetails implements UserDetails, OAuth2User {
 
-	private final String username;
-
-	private final String password;
+	@Getter
+	private final MemberDto member;
 
 	private final Collection<? extends GrantedAuthority> authorities;
+
+	private String oAuth2UserName;
+
+	private Map<String, Object> oAuth2UserAttributes = new HashMap<>();
 
 	private boolean isAccountNonExpired;
 
@@ -29,11 +32,10 @@ public class MemberUserDetails implements UserDetails {
 
 	private boolean isEnabled;
 
-	public MemberUserDetails(String username, String password, EnumSet<MemberRole> roles) {
-		this.username = username;
-		this.password = password;
+	public PrincipalDetails(MemberDto memberDto) {
+		this.member = memberDto;
 		Set<SimpleGrantedAuthority> authorities = new HashSet<>();
-		for (MemberRole role : roles) {
+		for (MemberRole role : member.getRoles()) {
 			authorities.add(new SimpleGrantedAuthority(role.toString()));
 		}
 		this.authorities = authorities;
@@ -43,8 +45,25 @@ public class MemberUserDetails implements UserDetails {
 		this.isEnabled = true;
 	}
 
-	public static MemberUserDetails of(Member member) {
-		return new MemberUserDetails(member.getUsername(), member.getPassword(), member.getRoles());
+	public PrincipalDetails(MemberDto memberDto, OAuth2User oAuth2User) {
+		this(memberDto);
+		this.oAuth2UserName = oAuth2User.getName();
+		this.oAuth2UserAttributes = oAuth2User.getAttributes();
+	}
+
+	@Override
+	public @Nullable String getName() {
+		return this.oAuth2UserName;
+	}
+
+	@Override
+	public <A> A getAttribute(String name) {
+		return OAuth2User.super.getAttribute(name);
+	}
+
+	@Override
+	public Map<String, Object> getAttributes() {
+		return this.oAuth2UserAttributes;
 	}
 
 	@Override
@@ -54,12 +73,12 @@ public class MemberUserDetails implements UserDetails {
 
 	@Override
 	public String getPassword() {
-		return password;
+		return this.member.getPassword();
 	}
 
 	@Override
 	public String getUsername() {
-		return username;
+		return this.member.getUsername();
 	}
 
 	@Override

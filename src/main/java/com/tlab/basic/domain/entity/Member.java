@@ -6,17 +6,14 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.time.LocalDateTime;
 import java.util.EnumSet;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Member {
+public class Member extends AbstractAtEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,26 +26,28 @@ public class Member {
 	private String password;
 
 	@Column(nullable = false)
+	private String nickname;
+
+	@Column(nullable = false)
 	private String email;
 
-	private String provider;
+	@Enumerated(EnumType.STRING)
+	private MemberProvider provider;
+
+	private String providerId;
 
 	@Convert(converter = MemberRoleEnumSetConverter.class)
 	private EnumSet<MemberRole> roles = EnumSet.of(MemberRole.ROLE_USER);
 
-	@CreatedDate
-	private LocalDateTime createdAt;
-
-	@LastModifiedDate
-	private LocalDateTime updatedAt;
-
 	@Builder
-	private Member(String username, String password, String email, String provider, EnumSet<MemberRole> roles) {
+	private Member(String username, String password, String nickname, String email, MemberProvider provider, String providerId, EnumSet<MemberRole> roles) {
 		this.username = username;
 		this.password = password;
+		this.nickname = nickname;
 		this.email = email;
 		this.provider = provider;
-		if (roles != null) this.roles = roles;
+		this.providerId = providerId;
+		this.roles = roles;
 	}
 
 	public void encodePassword(PasswordEncoder passwordEncoder) {

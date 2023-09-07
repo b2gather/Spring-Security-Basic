@@ -71,7 +71,8 @@ class MemberControllerTest extends AbstractControllerTest {
 	void Register_UsernameAlreadyExistException() throws Exception {
 		// given
 		MemberRegisterDto memberRegisterDto = getMemberRegisterDto();
-		when(memberService.register(any())).thenThrow(new UsernameAlreadyExistException());
+		when(memberService.register(any(MemberRegisterDto.class)))
+				.thenThrow(new UsernameAlreadyExistException());
 
 		// when
 		ResultActions actions = mockMvc.perform(post("/members")

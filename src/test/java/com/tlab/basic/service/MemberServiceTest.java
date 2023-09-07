@@ -8,7 +8,9 @@ import com.tlab.basic.domain.mapper.MemberMapperImpl;
 import com.tlab.basic.exception.UsernameAlreadyExistException;
 import com.tlab.basic.repository.MemberRepository;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -18,10 +20,13 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.util.Optional;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
+@TestMethodOrder(MethodOrderer.DisplayName.class)
 @ExtendWith(MockitoExtension.class)
 class MemberServiceTest {
 
@@ -70,6 +75,33 @@ class MemberServiceTest {
 		);
 	}
 
+	@DisplayName("FindByUsername")
+	@Test
+	void FindByUsername() {
+		// given
+		when(memberRepository.findByUsername(any()))
+				.thenReturn(Optional.ofNullable(Member.builder().build()));
+
+		// when
+		Optional<MemberDto> memberDtoOptional = memberService.findByUsername("exist username");
+
+		// then
+		assertThat(memberDtoOptional.isPresent()).isTrue();
+	}
+
+	@DisplayName("FindByUsername | 없는 유저명 -> Optional.isEmpty")
+	@Test
+	void FindByUsername_empty() {
+		// given
+		when(memberRepository.findByUsername(any())).thenReturn(Optional.empty());
+
+		// when
+		Optional<MemberDto> memberDtoOptional = memberService.findByUsername("non exist username");
+
+		// then
+		assertThat(memberDtoOptional.isEmpty()).isTrue();
+	}
+
 	private MemberRegisterDto getMemberRegisterDto() {
 		MemberRegisterDto memberRegisterDto = new MemberRegisterDto();
 		memberRegisterDto.setUsername("John");
@@ -77,5 +109,4 @@ class MemberServiceTest {
 		memberRegisterDto.setEmail("<EMAIL>");
 		return memberRegisterDto;
 	}
-
 }
