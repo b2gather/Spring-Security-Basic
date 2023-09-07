@@ -1,6 +1,5 @@
 package com.tlab.basic.auth;
 
-import com.tlab.basic.auth.PrincipalDetails;
 import com.tlab.basic.domain.dto.MemberDto;
 import com.tlab.basic.domain.dto.OAuthMemberRegisterDto;
 import com.tlab.basic.domain.entity.MemberProvider;
