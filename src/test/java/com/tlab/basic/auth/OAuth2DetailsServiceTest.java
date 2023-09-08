@@ -103,11 +103,10 @@ class OAuth2DetailsServiceTest {
 		// given
 		String registrationId = "naver";
 		OAuth2User oAuth2User = this.getOAuth2UserOfNaver();
-		Map<String, String> responseAttributes = oAuth2User.<Map<String, String>>getAttribute("response");
+		Map<String, String> responseAttributes = oAuth2User.getAttribute("response");
 		String username = this.createUsername(registrationId,
 				Objects.requireNonNull(responseAttributes).get("id"));
 		OAuth2UserRequest userRequest = this.getOAuth2UserRequestMock(registrationId);
-		MemberDto memberDto = this.getMemberDtoOfNaver(username, oAuth2User);
 
 		doReturn(oAuth2User).when(service).loadUserFromSuper(userRequest);
 		when(memberService.findByUsername(username)).thenReturn(Optional.empty());
@@ -168,17 +167,6 @@ class OAuth2DetailsServiceTest {
 		memberDto.setNickname(oAuth2User.getAttribute("name"));
 		memberDto.setEmail(oAuth2User.getAttribute("email"));
 		memberDto.setProvider(OAuthProvider.GOOGLE);
-		memberDto.setProviderId(oAuth2User.getName());
-		memberDto.setRoles(EnumSet.of(MemberRole.ROLE_USER));
-		return memberDto;
-	}
-
-	private MemberDto getMemberDtoOfNaver(String username, OAuth2User oAuth2User) {
-		MemberDto memberDto = new MemberDto();
-		memberDto.setUsername(username);
-		memberDto.setNickname(oAuth2User.getAttribute("nickname"));
-		memberDto.setEmail(oAuth2User.getAttribute("email"));
-		memberDto.setProvider(OAuthProvider.NAVER);
 		memberDto.setProviderId(oAuth2User.getName());
 		memberDto.setRoles(EnumSet.of(MemberRole.ROLE_USER));
 		return memberDto;
