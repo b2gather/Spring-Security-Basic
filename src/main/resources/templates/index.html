@@ -1,26 +1,20 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head>
-    <meta charset="UTF-8">
-    <link rel="icon" href="/favicon.ico">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spring Security Basic</title>
-    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
-    <link th:href="@{/css/custom.css}" rel="stylesheet">
-</head>
-<body>
-    Hello world! <span sec:authentication="name"></span>
-    <br>
-    <div sec:authorize="isAuthenticated()">
-        <span sec:authentication="name"></span>
-        <br>
-        <span sec:authentication="principal"></span>
-        <br>
-        <span sec:authentication="authorities"></span>
-    </div>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/layout}">
 
-    <script th:src="@{/js/bootstrap-531/bootstrap.bundle.min.js}"></script>
-    <script th:src="@{/js/axios-1_5_0/axios.js}"></script>
-    <script th:src="@{/js/vue/unpkg.com_vue_3.3.4_dist_vue.global.js}"></script>
-</body>
+<th:block layout:fragment="content">
+    <main id="app" class="container">
+        Hello world! <span sec:authentication="name"></span>
+        <br>
+        <div sec:authorize="isAuthenticated()">
+            <span sec:authentication="name"></span>
+            <br>
+            <span sec:authentication="principal"></span>
+            <br>
+            <span sec:authentication="authorities"></span>
+        </div>
+    </main>
+</th:block>
 </html>

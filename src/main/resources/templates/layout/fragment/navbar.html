@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<th:block th:fragment="navbarFragment">
+    <nav class="navbar navbar-expand-lg bg-body-tertiary sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="/">Fixed navbar</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarCollapse">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            회원기능
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a href="/members" class="dropdown-item" disabled="disabled">회원목록</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            상품기능
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><router-link to="/items/register" class="dropdown-item">상품등록</router-link></li>
+                            <li><router-link to="/items" class="dropdown-item">상품목록</router-link></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            주문기능
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><router-link to="/orders/register" class="dropdown-item">상품주문</router-link></li>
+                            <li><router-link to="/orders" class="dropdown-item">주문내역</router-link></li>
+                        </ul>
+                    </li>
+                </ul>
+                <form class="d-flex" role="search">
+                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                    <button class="btn btn-outline-success me-2" type="submit">Search</button>
+                </form>
+                <div sec:authorize="isAuthenticated()">
+                    <form th:action="@{/logout}" method="post">
+                        <button class="btn btn-outline-secondary" type="submit">로그아웃</button>
+                    </form>
+                </div>
+                <div sec:authorize="isAnonymous()">
+                    <button class="btn btn-outline-primary" type="button" th:onclick="|location.href='@{/login}'|">로그인</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+</th:block>
+</html>
