@@ -1,8 +1,9 @@
 package com.tlab.basic.domain.entity;
 
-public enum MemberProvider {
+public enum OAuthProvider {
 
 	LOCAL,
 	GOOGLE,
+	NAVER
 
 }

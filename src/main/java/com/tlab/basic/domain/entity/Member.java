@@ -32,7 +32,7 @@ public class Member extends AbstractAtEntity {
 	private String email;
 
 	@Enumerated(EnumType.STRING)
-	private MemberProvider provider;
+	private OAuthProvider provider;
 
 	private String providerId;
 
@@ -40,7 +40,7 @@ public class Member extends AbstractAtEntity {
 	private EnumSet<MemberRole> roles = EnumSet.of(MemberRole.ROLE_USER);
 
 	@Builder
-	private Member(String username, String password, String nickname, String email, MemberProvider provider, String providerId, EnumSet<MemberRole> roles) {
+	private Member(String username, String password, String nickname, String email, OAuthProvider provider, String providerId, EnumSet<MemberRole> roles) {
 		this.username = username;
 		this.password = password;
 		this.nickname = nickname;

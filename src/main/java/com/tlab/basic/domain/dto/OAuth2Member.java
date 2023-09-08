@@ -1,7 +1,7 @@
 package com.tlab.basic.domain.dto;
 
-import com.tlab.basic.domain.entity.MemberProvider;
 import com.tlab.basic.domain.entity.MemberRole;
+import com.tlab.basic.domain.entity.OAuthProvider;
 import lombok.*;
 
 import java.util.EnumSet;
@@ -10,7 +10,7 @@ import java.util.EnumSet;
 @NoArgsConstructor
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
-public class OAuthMemberRegisterDto {
+public class OAuth2Member {
 
 	private String username;
 
@@ -20,7 +20,7 @@ public class OAuthMemberRegisterDto {
 
 	private String password;
 
-	private MemberProvider provider;
+	private OAuthProvider provider;
 
 	private String providerId;
 

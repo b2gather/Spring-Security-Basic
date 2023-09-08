@@ -2,10 +2,10 @@ package com.tlab.basic.service;
 
 import com.tlab.basic.domain.dto.MemberDto;
 import com.tlab.basic.domain.dto.MemberRegisterDto;
-import com.tlab.basic.domain.dto.OAuthMemberRegisterDto;
+import com.tlab.basic.domain.dto.OAuth2Member;
 import com.tlab.basic.domain.entity.Member;
-import com.tlab.basic.domain.entity.MemberProvider;
 import com.tlab.basic.domain.entity.MemberRole;
+import com.tlab.basic.domain.entity.OAuthProvider;
 import com.tlab.basic.domain.mapper.MemberMapper;
 import com.tlab.basic.domain.mapper.MemberMapperImpl;
 import com.tlab.basic.exception.UsernameAlreadyExistException;
@@ -78,11 +78,11 @@ class MemberServiceTest {
 		);
 	}
 
-	@DisplayName("Register(OAuthMemberRegisterDto)")
+	@DisplayName("Register(OAuth2Member)")
 	@Test
 	void Register_OAuthMemberRegisterDto() {
 		// given
-		OAuthMemberRegisterDto oAuthMemberRegisterDto = getoAuthMemberRegisterDto();
+		OAuth2Member oAuth2Member = getoAuthMemberRegisterDto();
 		when(memberRepository.save(any(Member.class))).thenAnswer(invocation -> {
 			Member member = invocation.getArgument(0);
 			ReflectionTestUtils.setField(member, "id", 1L);
@@ -90,14 +90,14 @@ class MemberServiceTest {
 		});
 
 		// when
-		MemberDto registered = memberService.register(oAuthMemberRegisterDto);
+		MemberDto registered = memberService.register(oAuth2Member);
 
 		// then
-		assertThat(registered.getUsername()).isEqualTo(oAuthMemberRegisterDto.getUsername());
-		assertThat(registered.getEmail()).isEqualTo(oAuthMemberRegisterDto.getEmail());
-		assertThat(registered.getNickname()).isEqualTo(oAuthMemberRegisterDto.getNickname());
-		assertThat(registered.getProvider()).isEqualTo(oAuthMemberRegisterDto.getProvider());
-		assertThat(registered.getProviderId()).isEqualTo(oAuthMemberRegisterDto.getProviderId());
+		assertThat(registered.getUsername()).isEqualTo(oAuth2Member.getUsername());
+		assertThat(registered.getEmail()).isEqualTo(oAuth2Member.getEmail());
+		assertThat(registered.getNickname()).isEqualTo(oAuth2Member.getNickname());
+		assertThat(registered.getProvider()).isEqualTo(oAuth2Member.getProvider());
+		assertThat(registered.getProviderId()).isEqualTo(oAuth2Member.getProviderId());
 		assertThat(registered.getRoles()).containsExactly(MemberRole.ROLE_USER);
 	}
 
@@ -136,13 +136,13 @@ class MemberServiceTest {
 		return memberRegisterDto;
 	}
 
-	private OAuthMemberRegisterDto getoAuthMemberRegisterDto() {
-		return OAuthMemberRegisterDto.builder()
+	private OAuth2Member getoAuthMemberRegisterDto() {
+		return OAuth2Member.builder()
 				.username("John")
 				.password("<PASSWORD>")
 				.email("<EMAIL>")
 				.nickname("<NICKNAME>")
-				.provider(MemberProvider.GOOGLE)
+				.provider(OAuthProvider.GOOGLE)
 				.providerId("1L")
 				.build();
 	}

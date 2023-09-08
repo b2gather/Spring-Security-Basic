@@ -2,7 +2,7 @@ package com.tlab.basic.domain.mapper;
 
 import com.tlab.basic.domain.dto.MemberDto;
 import com.tlab.basic.domain.dto.MemberRegisterDto;
-import com.tlab.basic.domain.dto.OAuthMemberRegisterDto;
+import com.tlab.basic.domain.dto.OAuth2Member;
 import com.tlab.basic.domain.entity.Member;
 import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
@@ -17,7 +17,7 @@ public interface MemberMapper {
 	@Mapping(target = "providerId", ignore = true)
 	Member toEntity(MemberRegisterDto dto);
 
-	Member toEntity(OAuthMemberRegisterDto dto);
+	Member toEntity(OAuth2Member dto);
 
 	MemberDto toDto(Member member);
 

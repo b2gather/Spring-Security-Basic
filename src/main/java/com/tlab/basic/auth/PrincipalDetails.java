@@ -4,6 +4,7 @@ import com.tlab.basic.domain.dto.MemberDto;
 import com.tlab.basic.domain.entity.MemberRole;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.Nullable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -13,14 +14,13 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import java.util.*;
 
 @Setter
+@Slf4j
 public class PrincipalDetails implements UserDetails, OAuth2User {
 
 	@Getter
 	private final MemberDto member;
 
 	private final Collection<? extends GrantedAuthority> authorities;
-
-	private String oAuth2UserName;
 
 	private Map<String, Object> oAuth2UserAttributes = new HashMap<>();
 
@@ -45,15 +45,14 @@ public class PrincipalDetails implements UserDetails, OAuth2User {
 		this.isEnabled = true;
 	}
 
-	public PrincipalDetails(MemberDto memberDto, OAuth2User oAuth2User) {
+	public PrincipalDetails(MemberDto memberDto, Map<String, Object> oAuth2UserAttributes) {
 		this(memberDto);
-		this.oAuth2UserName = oAuth2User.getName();
-		this.oAuth2UserAttributes = oAuth2User.getAttributes();
+		this.oAuth2UserAttributes = oAuth2UserAttributes;
 	}
 
 	@Override
 	public @Nullable String getName() {
-		return this.oAuth2UserName;
+		return getUsername();
 	}
 
 	@Override

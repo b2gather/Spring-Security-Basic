@@ -2,7 +2,7 @@ package com.tlab.basic.service;
 
 import com.tlab.basic.domain.dto.MemberDto;
 import com.tlab.basic.domain.dto.MemberRegisterDto;
-import com.tlab.basic.domain.dto.OAuthMemberRegisterDto;
+import com.tlab.basic.domain.dto.OAuth2Member;
 import com.tlab.basic.domain.entity.Member;
 import com.tlab.basic.domain.mapper.MemberMapper;
 import com.tlab.basic.exception.UsernameAlreadyExistException;
@@ -33,8 +33,8 @@ public class MemberService {
 		return register(mapper.toEntity(memberRegisterDto));
 	}
 
-	public MemberDto register(OAuthMemberRegisterDto oAuthMemberRegisterDto) {
-		return register(mapper.toEntity(oAuthMemberRegisterDto));
+	public MemberDto register(OAuth2Member oAuth2Member) {
+		return register(mapper.toEntity(oAuth2Member));
 	}
 
 	private MemberDto register(Member member) {

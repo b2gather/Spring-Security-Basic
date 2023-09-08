@@ -1,7 +1,7 @@
 package com.tlab.basic.domain.dto;
 
-import com.tlab.basic.domain.entity.MemberProvider;
 import com.tlab.basic.domain.entity.MemberRole;
+import com.tlab.basic.domain.entity.OAuthProvider;
 import lombok.Data;
 
 import java.util.EnumSet;
@@ -17,7 +17,7 @@ public class MemberDto {
 
 	private String email;
 
-	private MemberProvider provider;
+	private OAuthProvider provider;
 
 	private String providerId;
 

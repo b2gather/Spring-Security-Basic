@@ -1,8 +1,9 @@
 package com.tlab.basic.auth;
 
+import com.tlab.basic.auth.model.OAuth2GoogleUser;
+import com.tlab.basic.auth.model.OAuth2NaverUser;
+import com.tlab.basic.auth.model.OAuth2ProviderUser;
 import com.tlab.basic.domain.dto.MemberDto;
-import com.tlab.basic.domain.dto.OAuthMemberRegisterDto;
-import com.tlab.basic.domain.entity.MemberProvider;
 import com.tlab.basic.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -10,8 +11,6 @@ import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -23,29 +22,18 @@ public class OAuth2DetailsService extends DefaultOAuth2UserService {
 	public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
 		OAuth2User oAuth2User = this.loadUserFromSuper(userRequest);
 
-		String registrationId = userRequest.getClientRegistration().getRegistrationId();
-		if (registrationId.equals("google")) {
-			String oAuth2UserName = oAuth2User.getName();
-			String username = registrationId + "_" + oAuth2UserName;
-
-			MemberDto memberDto;
-			Optional<MemberDto> memberDtoOptional = memberService.findByUsername(username);
-			if (memberDtoOptional.isPresent()) {
-				memberDto = memberDtoOptional.get();
-			} else {
-				OAuthMemberRegisterDto oAuthMemberRegisterDto = OAuthMemberRegisterDto.builder()
-						.username(username)
-						.nickname(oAuth2User.getAttribute("name"))
-						.password(oAuth2UserName)
-						.email(oAuth2User.getAttribute("email"))
-						.provider(MemberProvider.valueOf(registrationId.toUpperCase()))
-						.providerId(oAuth2UserName)
-						.build();
-				memberDto = memberService.register(oAuthMemberRegisterDto);
+		OAuth2ProviderUser providerUser;
+		String providerName = userRequest.getClientRegistration().getRegistrationId().toUpperCase();
+		switch (providerName) {
+			case "GOOGLE" -> providerUser = new OAuth2GoogleUser(oAuth2User);
+			case "NAVER" -> providerUser = new OAuth2NaverUser(oAuth2User);
+			default -> {
+				return oAuth2User;
 			}
-			return new PrincipalDetails(memberDto, oAuth2User);
 		}
-		return oAuth2User;
+		MemberDto memberDto = memberService.findByUsername(providerUser.getMemberUsername())
+				.orElseGet(() -> memberService.register(providerUser.toMember()));
+		return new PrincipalDetails(memberDto, providerUser.getAttributes());
 	}
 
 	protected OAuth2User loadUserFromSuper(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
